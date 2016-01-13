@@ -1,0 +1,55 @@
+<!DOCTYPE html lang="zh-CN">
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>WEUI + backbone 构建微信风格WEB风格</title>
+    <meta name="keywords" content="DT-CRM" />
+    <meta name="description" content="DT-CRM" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta HTTP-EQUIV="pragma" CONTENT="no-cache" />
+    <meta HTTP-EQUIV="cartche-Control" CONTENT="no-store, must-revalidate" />
+    <meta HTTP-EQUIV="expires" CONTENT="Wed, 26 Feb 1997 08:21:57 GMT" />
+    <meta HTTP-EQUIV="expires" CONTENT="0" />
+
+    <style type="text/css">
+        /*加载动画，放到这里是为了更快显示出loadding*/
+        #app-boot{
+          width: 0;
+          height: 0;
+          margin: 200px auto;
+          box-shadow: -0.625em -0.625em 0 0.625em #9b59b6, 0.625em -0.625em 0 0.625em #9b59b6, -0.625em 0.625em 0 0.625em #9b59b6, 0.625em 0.625em 0 0.625em #9b59b6;
+          -webkit-animation: circSquare 1.5s ease-in-out infinite;
+        }
+        @-webkit-keyframes circSquare {
+          50% {
+            width: 1.25em;
+            height: 1.25em;
+            border-radius: 50%;
+            transform: rotate(0.5turn);
+            box-shadow: -2.5em 0 0 #2ecc71, 2.5em 0 0 #e74c3c, -2.5em 0 0 #3498db, 2.5em 0 0 #f1c40f;
+          }
+          80%,
+          100% {
+            transform: rotate(1turn);
+          }
+        }
+    </style>
+    <link rel="stylesheet" href="css/app.css"/>
+</head>
+<body>
+    <div id="app-boot" class="app-boot"></div>
+        
+    <script type="text/javascript">
+        // 全局配置
+        window.config = {
+            environment:"prod"
+        };
+    </script>
+    <script data-main="js/main" src="js/lib/require/require-2.1.1.min.js"></script>
+</body>
+</html>
