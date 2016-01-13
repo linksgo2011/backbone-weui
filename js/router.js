@@ -58,8 +58,8 @@ define(
             /**
              * 默认控制器
              */
-            
-            defaultController:"Index",
+
+            defaultController: "Index",
 
             /**
              *  路由映射
@@ -117,7 +117,7 @@ define(
             /**
              * 请求页面前做的事情
              */
-            beforeReqest:function(){
+            beforeReqest: function() {
 
             },
 
@@ -126,7 +126,7 @@ define(
              * @param  {string} urlController 
              * @param  {string} options       
              */
-            redirect: function(urlController, options) {
+            dispatch: function(urlController, options) {
                 if (!urlController) {
                     $.warn('Router#dispatch: not valid urlController', urlController);
                     return;
@@ -153,14 +153,14 @@ define(
                 var self = this;
                 require(this.preLoadControllers,
                     function() {
-                        $.each(arguments,function(index,Controller) {
+                        $.each(arguments, function(index, Controller) {
                             var controllerName = self.preLoadControllers[index].split("/").pop();
                             var controllerInstance = new Controller({
                                 name: controllerName,
                                 router: self
                             });
                             cachedControllers[controllerName] = controllerInstance;
-                            $.log(controllerName+" preload",controllerName);
+                            $.log(controllerName + " preload", controllerName);
                         });
                     },
                     function(err) {
@@ -180,7 +180,7 @@ define(
                 if (!controllerName) {
                     controllerName = controller;
                 }
-                if(!controllerName){
+                if (!controllerName) {
                     controllerName = this.defaultController || "Index";
                 }
 
@@ -224,19 +224,19 @@ define(
 
                     controllerInstance.trigger('actionStart');
 
-                    if(!action){
+                    if (!action) {
                         action = controllerInstance.defaultAction || "index";
                     }
 
                     var methodAction = controllerInstance.actions[action];
                     if (methodAction && $.isFunction(controllerInstance[methodAction])) {
-                        controllerInstance[methodAction].apply(controllerInstance,params);
+                        controllerInstance[methodAction].apply(controllerInstance, params);
                     } else if ($.isFunction(methodAction)) {
                         methodAction.apply(controllerInstance, params);
                     } else if ($.isFunction(controllerInstance[action])) {
-                        controllerInstance[action].apply(controllerInstance,params);
+                        controllerInstance[action].apply(controllerInstance, params);
                     } else {
-                        controllerInstance.index.apply(controllerInstance,params);
+                        controllerInstance.index.apply(controllerInstance, params);
                     }
                     controllerInstance.trigger('actionFinish');
                 }
