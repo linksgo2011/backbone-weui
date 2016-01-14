@@ -11,11 +11,14 @@ define(
         var isBooted = false;
 
         function renderEnd($inpage, $outpage) {
-            $outpage && $outpage.remove();
+            if ($outpage) {
+                $outpage.remove();
+            }
 
             this.delegateEvents();
             this.afterRender();
             this.rendered = true;
+            Backbone.history.referer = Backbone.history.fragment;
         }
 
         function attachRouterToLinks() {
@@ -35,12 +38,7 @@ define(
 
             this.$('[data-role="back"]').off('click').on('click', $.proxy(function(e) {
                 window.history.back();
-                Backbone.history.isBack = true;
             }, this));
-
-            this.controller.on("actionFinish", function(event) {
-                Backbone.history.isBack = false;
-            });
         }
 
         /**
@@ -49,74 +47,70 @@ define(
          */
         var transitions = {
             isAnimating: false,
-            $curPage: "index-page", //存储当前页面的id
-            $nextPage: "", //存储下一页的id
-            back: function(curpage, nextpage, fn) {
-                transitions.$curPage = $curpage;
-                transitions.$nextPage = $nextpage;
-                transitions.animation(10, fn);
+            $curPage: null,
+            $nextPage: null,
+            // 动画 class 集合,这样可以拓展
+            aniClass: {
+                9: {
+                    outClass: 'pt-page-moveToLeftFade',
+                    inClass: 'pt-page-moveFromRightFade'
+                },
+                10: {
+                    outClass: 'pt-page-moveToRightFade',
+                    inClass: 'pt-page-moveFromLeftFade'
+                }
             },
-            next: function(curpage, nextpage, fn) {
-                transitions.$curPage = $curpage;
-                transitions.$nextPage = $nextpage;
-                transitions.animation(9, fn);
+            init: function($curpage, $nextpage) {
+                this.$curPage = $curpage;
+                this.$nextPage = $nextpage;
             },
-            skip: function(curpage, nextpage, fn) {
-                transitions.$curPage = $curpage;
-                transitions.$nextPage = $nextpage;
-                transitions.resetPage($(".page"), $("#" + nextpage));
+            back: function($curpage, $nextpage, fn) {
+                this.init.apply(this, arguments);
+                this.animation(10, fn);
+            },
+            next: function($curpage, $nextpage, fn) {
+                this.init.apply(this, arguments);
+                this.animation(9, fn);
+            },
+            skip: function($curpage, $nextpage, fn) {
+                this.init.apply(this, arguments);
+                this.$nextPage.addClass('page-current');
                 if (fn) {
                     fn.call();
                 }
             },
             animation: function(animation, fn) {
                 var that = this;
-                if (transitions.isAnimating) {
+                if (this.isAnimating) {
                     return false;
                 }
                 this.isAnimating = true;
                 this.$nextPage.addClass('page-current');
-                var aniClass = transitions.get_aniClass(animation); //获取过渡效果
-                var outClass = aniClass.outClass; //设置过渡效果
-                var inClass = aniClass.inClass; //设置过渡效果
-                animEndEventName = "animationend";
-                this.$currPage.addClass(outClass)
-                // $currPage.addClass(outClass).on(animEndEventName, function() {
-                //     $currPage.off(animEndEventName);
-                //     transitions.endCurrPage = true;
-                //     if (transitions.endNextPage) {
-                //         transitions.onEndAnimation($currPage, $nextPage, fn);
-                //     }
-                // });
+
+                var aniClass = this.get_aniClass(animation);
+                var outClass = aniClass.outClass;
+                var inClass = aniClass.inClass;
+                var animEndEventName = "animationend";
+
+                if (this.$curpage) {
+                    this.$currPage.addClass(outClass);
+                }
                 this.$nextPage.addClass(inClass).on(animEndEventName, function() {
-                    this.isAnimating = false;
-                    $nextPage.off(animEndEventName).removeClass(inClass);
+                    that.isAnimating = false;
+                    that.$nextPage.off(animEndEventName).removeClass(inClass);
                     if (typeof fn === "function") {
                         fn();
                     }
-                    //transitions.onEndAnimation(that.$currPage, that.$nextPage, fn);
-                    // if (transitions.endCurrPage) {
-                    // transitions.onEndAnimation($currPage, $nextPage, fn);
-                    // }
                 });
             },
             get_aniClass: function(animation) {
-                var outClass = '',
-                    inClass = '';
-                switch (animation) {
-                    case 9:
-                        outClass = 'pt-page-moveToLeftFade';
-                        inClass = 'pt-page-moveFromRightFade';
-                        break;
-                    case 10:
-                        outClass = 'pt-page-moveToRightFade';
-                        inClass = 'pt-page-moveFromLeftFade';
-                        break;
+                var ret = this.aniClass[animation];
+                if (!ret) {
+                    ret = {
+                        outClass: '',
+                        inClass: ''
+                    };
                 }
-                var ret = {
-                    outClass: outClass,
-                    inClass: inClass
-                };
                 return ret;
             }
         };

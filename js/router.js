@@ -170,8 +170,6 @@ define(
             },
 
             dispatchController: function(paramString) {
-                this.referer = paramString;
-
                 var urlParsed = paramString.split("/"),
                     controller = urlParsed[0],
                     action = urlParsed[1],
