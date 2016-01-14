@@ -7,8 +7,8 @@ define(
         'jquery',
         'underscore',
         'backbone',
-        'controller/MobileController',
-        'view/BaseMobileView',
+        'controller/Controller',
+        'view/View',
         'text!../template/Pages/index.html',
         'text!../template/Pages/add.html',
         'text!../template/Pages/bindEvent.html',
@@ -18,8 +18,8 @@ define(
         'text!../template/Pages/modal.html',
         'text!../template/Pages/iScroll.html'
     ],
-    function($, _, Backbone, MobileController, BaseMobileView, index, add, bindEvent, loadding,alert,actionsheet,modal,iScroll) {
-        return MobileController.extend({
+    function($, _, Backbone, Controller, View, index, add, bindEvent, loadding,alert,actionsheet,modal,iScroll) {
+        return Controller.extend({
             // 批量初始化
             initialize: function() {
                 var views = {
@@ -33,7 +33,7 @@ define(
                     iScrollView: iScroll
                 };
                 $.each(views, $.proxy(function(key,tpl){
-                    this[key] = new BaseMobileView({
+                    this[key] = new View({
                         $container: $('body'),
                         appendable: true,
                         controller: this,

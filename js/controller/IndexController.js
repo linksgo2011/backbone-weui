@@ -1,29 +1,28 @@
-
 /**
- * The index controller for displaying on the index home page.
+ * 首页控制器
  */
 define(
     [
         'jquery',
         'underscore',
         'backbone',
-        'controller/MobileController',
-        'view/BaseMobileView',
+        'controller/Controller',
+        'view/View',
         'text!../template/IndexTemplate.html'
     ],
-    function($, _, Backbone, MobileController, BaseMobileView, indexTpl) {
+    function($, _, Backbone, Controller, View, indexTpl) {
 
-        return MobileController.extend({
+        return Controller.extend({
 
             initialize: function() {
-                this.indexView = new BaseMobileView({
+                this.indexView = new View({
                     $container: $('body'),
                     appendable: true,
                     controller: this,
-                    textTemplate:indexTpl
+                    textTemplate: indexTpl
                 });
             },
-            
+
             index: function() {
                 this.indexView.render({});
             }

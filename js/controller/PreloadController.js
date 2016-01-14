@@ -7,12 +7,12 @@ define(
         'jquery',
         'underscore',
         'backbone',
-        'controller/MobileController',
+        'controller/Controller',
         'view/BaseMobileView',
         'text!../template/Preload/index.html'
     ],
-    function($, _, Backbone, MobileController, BaseMobileView, index) {
-        return MobileController.extend({
+    function($, _, Backbone, Controller, BaseMobileView, index) {
+        return Controller.extend({
             // 批量初始化
             initialize: function() {
                 var views = {

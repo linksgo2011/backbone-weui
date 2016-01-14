@@ -1,17 +1,16 @@
-
 /**
- * The Default controller if there is no controller matching by the router.
+ * 如果没有控制匹配使用默认控制器
  */
 define(
     [
         'jquery',
         'underscore',
         'backbone',
-        'controller/MobileController',
+        'controller/Controller',
         'view/DefaultView'
     ],
-    function($, _, Backbone, MobileController, DefaultView) {
-        return MobileController.extend({
+    function($, _, Backbone, Controller, DefaultView) {
+        return Controller.extend({
             initialize: function() {
                 this.defaultView = new DefaultView({
                     $container: $('body'),

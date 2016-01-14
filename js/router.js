@@ -6,28 +6,21 @@ define(
         'jquery',
         'underscore',
         'backbone',
-        'controller/IndexController',
         'controller/DefaultController'
     ],
-    function($, _, Backbone, IndexController, DefaultController) {
+    function($, _, Backbone, DefaultController) {
 
-        var indexController,
-            defaultController;
+        var defaultController;
 
         /**
-         * Holds controller instance for caching purpose.
-         *
+         * 缓存控制器
          * @type {Object}
          */
-        var cachedControllers = {
+        var cachedControllers = {};
 
-        };
-
-        /**
-         * Holds previous and current controller instance for detecting back/forward button
-         */
         var navigationStack = [];
 
+        // TODO controllerFlow 和 addToNavigationStack 需要视情况优化
         function addToNavigationStack(controllerInstance) {
             if (navigationStack.length < (this.options.maxNavigationStackLength || 10)) {
                 navigationStack.push(controllerInstance);
@@ -55,19 +48,30 @@ define(
         }
 
         return Backbone.Router.extend({
+
+            /**
+             * 上次访问path
+             * @type {String}
+             */
+            referer: "",
+
             /**
              * 默认控制器
              */
-
             defaultController: "Index",
 
             /**
              *  路由映射
              * For example: 'user' : 'User' => router will try to find module under: controller/UserController.
              */
-            controllers: {
+            controllers: {},
 
-            },
+            /**
+             * 预加载控制器数组
+             * @type {Array}
+             */
+            preLoadControllers: [],
+
 
             controllerFlow: {
                 name: 'IndexController'
@@ -137,10 +141,6 @@ define(
             },
 
             routes: {
-                // ':controller': 'dispatchController',
-                // ':controller/:action': 'dispatchController',
-                // ':controller/:action/*params': 'dispatchController',
-                // '*actions': 'dispatchController'
                 '*params': 'dispatchController'
             },
 
@@ -148,7 +148,7 @@ define(
                 this.options = options || {};
 
                 /**
-                 * 初始化预加载部分控制器
+                 * 预加载控制器
                  */
                 var self = this;
                 require(this.preLoadControllers,
@@ -164,12 +164,14 @@ define(
                         });
                     },
                     function(err) {
-                        $.warn('AppRouter#dispatchController: Error for loading controller: ' + controller, err);
+                        $.warn('AppRouter#dispatchController: Error for loading preLoadControllers: ', err);
                     }
                 );
             },
 
             dispatchController: function(paramString) {
+                this.referer = paramString;
+
                 var urlParsed = paramString.split("/"),
                     controller = urlParsed[0],
                     action = urlParsed[1],
@@ -181,7 +183,7 @@ define(
                     controllerName = controller;
                 }
                 if (!controllerName) {
-                    controllerName = this.defaultController || "Index";
+                    controllerName = this.defaultController || "Default";
                 }
 
                 controllerName += 'Controller';
@@ -214,6 +216,7 @@ define(
                         },
                         function(err) {
                             $.warn('AppRouter#dispatchController: Error for loading controller: ' + controllerName, err);
+                            self.ErrorController(_getRouteFragment.call(self, controller, action, params));
                         }
                     );
 
@@ -223,23 +226,30 @@ define(
                     addToNavigationStack.call(this, controllerInstance);
 
                     controllerInstance.trigger('actionStart');
-
                     if (!action) {
                         action = controllerInstance.defaultAction || "index";
                     }
-
-                    var methodAction = controllerInstance.actions[action];
-                    if (methodAction && $.isFunction(controllerInstance[methodAction])) {
-                        controllerInstance[methodAction].apply(controllerInstance, params);
-                    } else if ($.isFunction(methodAction)) {
-                        methodAction.apply(controllerInstance, params);
-                    } else if ($.isFunction(controllerInstance[action])) {
+                    if ($.isFunction(controllerInstance[action])) {
                         controllerInstance[action].apply(controllerInstance, params);
-                    } else {
-                        controllerInstance.index.apply(controllerInstance, params);
                     }
                     controllerInstance.trigger('actionFinish');
                 }
+            },
+
+            /**
+             * 错误处理
+             */
+            ErrorController: function(params) {
+                if (!defaultController) {
+                    defaultController = new DefaultController({
+                        name: 'DefaultController',
+                        router: this
+                    });
+                }
+                addToNavigationStack.call(this, defaultController);
+                defaultController.trigger('actionStart');
+                defaultController.index(params);
+                defaultController.trigger('actionFinish');
             },
 
             getNavigationRouteStack: function() {
@@ -262,4 +272,5 @@ define(
             return routeFragment;
         }
 
-    });
+    }
+);

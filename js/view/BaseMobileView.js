@@ -62,7 +62,9 @@ define(
                 attachRouterToLinks.call(this);
 
                 var transition = this.controller.transition,
-                    reverseTransition = this.controller.getReverseTransition();
+                    reverseTransition = "";
+                    
+                    // reverseTransition = this.controller.getReverseTransition();
                 //TODO this is weird to avoid: Uncaught TypeError: Cannot call method 'trigger' of undefined
                 //this could be the problem of: jquery mobile is not fully initialized
                 this.beforeRender();
@@ -80,8 +82,6 @@ define(
 
                 var that = this;
                 var current_page = transitions.curPage || "index-page";
-
-                setTimeout($.loadingHide,1200);
 
                 if (appBooted) {
                     var transitioner = !Backbone.history.isBack?"next":"back";
