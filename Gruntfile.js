@@ -46,14 +46,28 @@ module.exports = function(grunt) {
                 browser: true, // browser environment
                 devel: true 
             }
+        },
+        react:{
+        dynamic_mappings: {
+              files: [
+                {
+                  expand: true,
+                  cwd: 'js/jsx',
+                  src: ['**/*.jsx'],
+                  dest: 'js/jsx',
+                  ext: '.js'
+                }
+              ]
+            }
         }
     });
-
+    
+    grunt.loadNpmTasks('grunt-react');
     grunt.loadNpmTasks('grunt-contrib-requirejs');
     grunt.loadNpmTasks('grunt-css-import');
     grunt.loadNpmTasks('grunt-css');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     
-    grunt.registerTask('default', ['css_import', 'cssmin', 'uglify', 'requirejs','jshint']);
+    grunt.registerTask('default', ['css_import', 'cssmin','react', 'uglify', 'requirejs','jshint']);
 }

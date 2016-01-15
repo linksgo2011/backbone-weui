@@ -1,21 +1,30 @@
 (function() {
     'use strict';
 
-    var root = this,
-        require = root.require,
-        config = window.config;
+    var root = this;
+    var require = root.require;
+    var config = window.config || {};
+    var waitSeconds = (config.environment === "prod") ? 2000 : 30;
+    var fileExtension = (config.environment === "prod") ? ".js" : ".jsx";
 
     require.config({
         paths: {
             'domReady': 'lib/require/plugins/domReady-2.0.1',
             'text': 'lib/require/plugins/text-2.0.3',
+            'jsx': 'lib/require/plugins/jsx',
             'jquery': 'lib/jquery/jquery-2.1.4',
             'underscore': 'lib/underscore/underscore-1.4.2',
             'backbone': 'lib/backbone/backbone-0.9.2',
-            'jquery.log': 'lib/jquery/plugins/jquery.log-0.1.0'
+            'jquery.log': 'lib/jquery/plugins/jquery.log-0.1.0',
+            "react": "lib/react/react",
+            "JSXTransformer": "lib/react/JSXTransformer"
         },
-
-        waitSeconds: (config.environment === "prod") ? 2000 : 30, //2000 seconds for prod mode on bootstrap and 2 seconds for dev mode
+      jsx: {
+        fileExtension: fileExtension,
+        harmony: true,
+        stripTypes: true
+      },
+        waitSeconds:  2000, //2000 seconds for prod mode on bootstrap and 2 seconds for dev mode
         shim: {
             underscore: {
                 exports: '_'

@@ -25,6 +25,19 @@ define(
 
             index: function() {
                 this.indexView.render({});
+            },
+            react:function(){
+                var that = this;
+                    require(['react', 'jsx!../js/jsx/Timer',"view/ReactView"], function(React, Timer,ReactView) {
+                      Timer = React.createFactory(Timer);
+                        that.indexView = new ReactView({
+                            $container: $('body'),
+                            appendable: true,
+                            controller: that,
+                            jsx: Timer
+                        });
+                        that.indexView.render();
+                    });
             }
         });
     }

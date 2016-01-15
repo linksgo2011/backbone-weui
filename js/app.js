@@ -10,13 +10,10 @@ define(
     function(_, Backbone, Router) {
 
         var AppRouter = Router.extend({
-
             /**
              * 控制器预加载
              */
-            preLoadControllers: [
-                'controller/PreloadController'
-            ]
+            preLoadControllers: [ ]
         });
 
         var appRouter = new AppRouter({
