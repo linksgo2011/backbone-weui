@@ -20,6 +20,8 @@ define(
 
         var navigationStack = [];
 
+        var urlStack = [];
+
         // TODO controllerFlow 和 addToNavigationStack 需要视情况优化
         function addToNavigationStack(controllerInstance) {
             if (navigationStack.length < (this.options.maxNavigationStackLength || 10)) {
@@ -48,13 +50,6 @@ define(
         }
 
         return Backbone.Router.extend({
-
-            /**
-             * 上次访问path
-             * @type {String}
-             */
-            referer: "",
-
             /**
              * 默认控制器
              */
@@ -170,6 +165,17 @@ define(
             },
 
             dispatchController: function(paramString) {
+                if (urlStack.length < (this.options.maxNavigationStackLength || 10)) {
+                    urlStack.push(paramString);
+                } else {
+                    urlStack.shift(paramString);
+                    urlStack.push(paramString);
+                }
+                
+                if(paramString == urlStack[urlStack.length-3]){
+                    Backbone.history.isBack  = true;
+                }
+
                 var urlParsed = paramString.split("/"),
                     controller = urlParsed[0],
                     action = urlParsed[1],

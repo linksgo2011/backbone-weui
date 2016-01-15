@@ -8,17 +8,20 @@ define(
         'backbone'
     ],
     function($, _, Backbone) {
+        var $preEl = null;
+
         var isBooted = false;
 
-        function renderEnd($inpage, $outpage) {
+        function renderEnd($outpage, $inpage) {
             if ($outpage) {
                 $outpage.remove();
             }
-
+                
+            // 保留本次渲染副本
+            $preEl = $inpage;
             this.delegateEvents();
             this.afterRender();
             this.rendered = true;
-            Backbone.history.referer = Backbone.history.fragment;
         }
 
         function attachRouterToLinks() {
@@ -76,7 +79,7 @@ define(
                 this.init.apply(this, arguments);
                 this.$nextPage.addClass('page-current');
                 if (fn) {
-                    fn.call();
+                    fn($curpage, $nextpage);
                 }
             },
             animation: function(animation, fn) {
@@ -92,14 +95,14 @@ define(
                 var inClass = aniClass.inClass;
                 var animEndEventName = "animationend";
 
-                if (this.$curpage) {
-                    this.$currPage.addClass(outClass);
+                if (this.$curPage) {
+                    this.$curPage.addClass(outClass);
                 }
                 this.$nextPage.addClass(inClass).on(animEndEventName, function() {
                     that.isAnimating = false;
                     that.$nextPage.off(animEndEventName).removeClass(inClass);
                     if (typeof fn === "function") {
-                        fn();
+                        fn(that.$curPage, that.$nextPage);
                     }
                 });
             },
@@ -116,7 +119,6 @@ define(
         };
 
         return Backbone.View.extend({
-            $preEl: null,
 
             beforeInitialize: function(options) {
                 return this;
@@ -161,7 +163,6 @@ define(
             render: function() {
                 this.beforeRender();
                 if (this.$el) {
-                    this.$preEl = this.$el;
                     this.destroy();
                 }
                 if (this.template) {
@@ -188,7 +189,7 @@ define(
                     transMethon = "back";
                 }
 
-                transitions[transMethon](this.$preEl, this.$el, _.bind(renderEnd, this));
+                transitions[transMethon]($preEl, this.$el, _.bind(renderEnd, this));
                 return this;
             },
 
