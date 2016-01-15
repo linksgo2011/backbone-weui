@@ -16,7 +16,7 @@ define(
             if ($outpage) {
                 $outpage.remove();
             }
-                
+            
             // 保留本次渲染副本
             $preEl = $inpage;
             this.delegateEvents();
@@ -178,7 +178,7 @@ define(
 
                 // 绑定view全局事件
                 attachRouterToLinks.call(this);
-
+                
                 var transMethon = "next";
                 if (!isBooted) {
                     $('#app-boot').hide();

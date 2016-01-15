@@ -7,15 +7,17 @@ define(
         'underscore',
         'backbone',
         'controller/Controller',
-        'view/DefaultView'
+        'view/View',
+        'text!../template/DefaultTemplate.html'
     ],
-    function($, _, Backbone, Controller, DefaultView) {
+    function($, _, Backbone, Controller, View,defaultTpl) {
         return Controller.extend({
             initialize: function() {
-                this.defaultView = new DefaultView({
+                this.defaultView = new View({
                     $container: $('body'),
                     appendable: true,
                     controller: this,
+                    textTemplate: defaultTpl
                 });
             },
             index: function(params) {

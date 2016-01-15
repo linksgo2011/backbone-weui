@@ -8,10 +8,10 @@ define(
         'underscore',
         'backbone',
         'controller/Controller',
-        'view/BaseMobileView',
+        'view/View',
         'text!../template/Layzload/index.html'
     ],
-    function($, _, Backbone, Controller, BaseMobileView, index) {
+    function($, _, Backbone, Controller, View, index) {
         return Controller.extend({
             // 批量初始化
             initialize: function() {
@@ -19,7 +19,7 @@ define(
                     indexView: index
                 };
                 $.each(views, $.proxy(function(key,tpl){
-                    this[key] = new BaseMobileView({
+                    this[key] = new View({
                         $container: $('body'),
                         appendable: true,
                         controller: this,

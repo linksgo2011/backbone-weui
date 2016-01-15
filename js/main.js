@@ -49,7 +49,7 @@
 
     require(['domReady'], function(domReady) {
         domReady(function() {
-            if(config.environment === "prod"){
+            if (config.environment === "prod") {
                 updateModuleProgress = function(context, map, depMaps) {
                     // TODO 如果是生产环境，可以显示加载进度
                 };
@@ -61,7 +61,6 @@
         [
             'jquery',
             'jquery.log',
-            'transitions',
             'backbone',
             'utils',
             'app'
